@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Vulnerability Scan on Failure
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@master  
         with:
           scan-type: 'filesystem'
           ignore-unfixed: true
