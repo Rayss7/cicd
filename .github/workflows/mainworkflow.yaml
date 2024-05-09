@@ -22,8 +22,10 @@ jobs:
           output: 'scan-results.txt'
           severity: 'CRITICAL'
       
-      - name: Show scan results
-        run: cat scan-results.txt
+      - name: Get scan results
+        run: |
+          echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')"
+          echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
           
       # - name: Initialize QEMU
       #   uses: docker/setup-qemu-action@v3
