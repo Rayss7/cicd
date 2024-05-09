@@ -85,9 +85,8 @@ jobs:
       - name: Slack Notification for Success msg
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_TITLE: "Build and Sign Process Completed"
+          SLACK_TITLE: "Image build and signed"
           SLACK_MESSAGE: |
-            *Docker Image build and signed. Check the repository and Docker Hub*
             *Name:* Sun TianRui
             *Matriculation:* A0290889E
             *Email:* E1327920@u.nue.edu
