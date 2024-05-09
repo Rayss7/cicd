@@ -19,8 +19,11 @@ jobs:
         with:
           scan-type: 'fs'
           format: 'table'
-          # output: 'scan-results.txt'
+          output: 'scan-results.txt'
           severity: 'CRITICAL'
+      
+      - name: Show scan results
+        run: cat scan-results.txt
           
       # - name: Initialize QEMU
       #   uses: docker/setup-qemu-action@v3
