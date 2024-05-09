@@ -33,7 +33,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "Vulnerabilities are found, see uploaded report!"
+          SLACK_MESSAGE: "Failed trivy scan, see uploaded report"
           SLACK_COLOR: "failure"
 
       - name: Upload Trivy scan results to slack
@@ -59,7 +59,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+    
       - name: Docker Image Build and Push
         id: build-and-push
         uses: docker/build-push-action@v5
