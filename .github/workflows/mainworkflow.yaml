@@ -19,17 +19,17 @@ jobs:
         with:
           scan-type: 'fs'
           format: 'table'
-          output: 'scan-results.txt'
+          output: 'trivy-report.txt'
           severity: 'HIGH'
       
       - name: Get scan results
-        id: get-scan-result
+        id: get-trivy-report
         run: |
-          echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')"
-          echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
+          echo "trivy-report=$([ -s trivy-report.txt ] && echo '1' || echo '0')"
+          echo "trivy-report=$([ -s trivy-report.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
    
       - name: Scan alert to slack
-        if: steps.get-scan-result.outputs.scan-result == '1' 
+        if: steps.get-trivy-report.outputs.trivy-report == '1' 
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
@@ -38,15 +38,15 @@ jobs:
           SLACK_COLOR: "failure"
 
       - name: Submit Trivy report result to slack
-        if: steps.get-scan-result.outputs.scan-result == '1' 
+        if: steps.get-trivy-report.outputs.trivy-report == '1' 
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          file_path: scan-results.txt
+          file_path: trivy-report.txt
       
       - name: Control the Flow Exit
-        if: steps.get-scan-result.outputs.scan-result == '1' 
+        if: steps.get-trivy-report.outputs.trivy-report == '1' 
         run: exit 1
 
       - name: Start QEMU
