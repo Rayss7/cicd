@@ -81,7 +81,7 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-
+        
       - name: Slack Notification for Success msg
         uses: rtCamp/action-slack-notify@v2
         env:
