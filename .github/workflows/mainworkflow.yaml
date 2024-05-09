@@ -42,7 +42,7 @@ jobs:
         uses: sigstore/cosign-installer@v3.5.0
         with:
           cosign-release: 'v2.2.4'
-
+      #a
       - name: Sign Docker Image
         run: |
           cosign sign --key env://SIGNING_KEY "${IMAGE_REF}@${IMAGE_HASH}"
