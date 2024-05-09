@@ -20,7 +20,7 @@ jobs:
           scan-type: 'fs'
           format: 'table'
           output: 'scan-results.txt'
-          severity: 'HIGH'
+          severity: 'CRITICAL'
       
       - name: Get scan results
         id: get-scan-result
@@ -35,7 +35,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_MESSAGE: "Vulnerabilities are found, see uploaded report!"
           SLACK_COLOR: "failure"
-          
+
       - name: Upload Trivy scan results to slack
         if: steps.get-scan-result.outputs.scan-result == '1' 
         uses: MeilCli/slack-upload-file@v4
