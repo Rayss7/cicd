@@ -20,7 +20,7 @@ jobs:
           scan-type: 'fs'
           format: 'table'
           output: 'scan-results.txt'
-          severity: 'CRITICAL'
+          severity: 'HIGH'
       
       - name: Get scan results
         id: get-scan-result
@@ -84,6 +84,12 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_TITLE: "Build and Sign Process Completed"
-          SLACK_MESSAGE: "Docker Image build and signed. Check the repository and Docker Hub."
+          SLACK_MESSAGE: |
+            *Docker Image build and signed. Check the repository and Docker Hub*
+            *Name:* Sun Tianrui
+            *Matriculation:* A0290889E
+            *Email:* E1327920@u.nue.edu
+            *Git:* https://github.com/Rayss7/cicd
+            *Docker:* https://hub.docker.com/repository/docker/raysun777/ci-cd-workshop/general                
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
