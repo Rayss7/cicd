@@ -20,7 +20,7 @@ jobs:
           scan-type: 'fs'
           format: 'table'
           output: 'scan-results.txt'
-          severity: 'CRITICAL'
+          severity: 'HIGH'
       
       - name: Get scan results
         id: get-scan-result
