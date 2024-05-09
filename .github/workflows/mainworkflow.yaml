@@ -23,10 +23,27 @@ jobs:
           severity: 'HIGH,CRITICAL'
       
       - name: Get scan results
+        id: get_scan_result
         run: |
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')"
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
-          
+
+      - name: Scan alert to slack
+        if: steps.get_scan_result.outputs.scan-result == '1' 
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: "Vulnerabilities are found, see uploaded report!"
+
+      - name: Upload Trivy scan results to slack
+        if: steps.get_scan_result.outputs.scan-result == '1' 
+        uses: MeilCli/slack-upload-file@v4
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file: scan-results.txt
+        run: exit 1
+
       # - name: Initialize QEMU
       #   uses: docker/setup-qemu-action@v3
 
