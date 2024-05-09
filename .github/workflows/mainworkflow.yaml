@@ -42,6 +42,9 @@ jobs:
           slack_token: ${{ secrets.SLACK_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file: scan-results.txt
+      
+      - name: Flow Control
+        if: steps.get_scan_result.outputs.scan-result == '1' 
         run: exit 1
 
       # - name: Initialize QEMU
