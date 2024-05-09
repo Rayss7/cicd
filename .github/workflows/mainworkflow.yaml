@@ -20,7 +20,7 @@ jobs:
           scan-type: 'fs'
           format: 'table'
           output: 'scan-results.txt'
-          severity: 'HIGH'
+          severity: 'CRTTICAL'
       
       - name: Get scan results
         id: get-scan-result
@@ -37,7 +37,7 @@ jobs:
           SLACK_MESSAGE: "Failed trivy scan, see uploaded report"
           SLACK_COLOR: "failure"
 
-      - name: Upload Trivy scan results to slack
+      - name: Submit Trivy report result to slack
         if: steps.get-scan-result.outputs.scan-result == '1' 
         uses: MeilCli/slack-upload-file@v4
         with:
@@ -88,7 +88,7 @@ jobs:
           SLACK_TITLE: "Build and Sign Process Completed"
           SLACK_MESSAGE: |
             *Docker Image build and signed. Check the repository and Docker Hub*
-            *Name:* Sun Tianrui
+            *Name:* Sun TianRui
             *Matriculation:* A0290889E
             *Email:* E1327920@u.nue.edu
             *Git:* https://github.com/Rayss7/cicd
