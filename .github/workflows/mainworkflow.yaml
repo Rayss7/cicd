@@ -89,7 +89,7 @@ jobs:
           SLACK_MESSAGE: |
             *Name:* Sun TianRui
             *Matriculation:* A0290889E
-            *Email:* E1327920@u.nue.edu
+            *Email:* E1327920@u.nus.edu
             *Git:* https://github.com/Rayss7/cicd
             *Docker:* https://hub.docker.com/repository/docker/raysun777/ci-cd-workshop/general                
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
