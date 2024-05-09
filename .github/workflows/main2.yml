@@ -3,100 +3,90 @@ name: CICDWorkFlow
 on:
   push:
     branches:
-      
       - 'release/v[0-9]+\\.[0-9]+'
   workflow_dispatch:
 
 jobs:
   build_successfully:
-    
     if: ${{ env.CI_CONDITION == 'SUCCESS' && !contains(github.event.head_commit.message, '#norun') }}
     runs-on: ubuntu-latest
     steps:
-    - name: Fetch the codebase
-      uses: actions/checkout@v4
+      - name: Fetch the codebase
+        uses: actions/checkout@v4
 
-   
-    - name: Security Scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'filesystem'
-        severity: 'CRITICAL'
+      - name: Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'filesystem'
+          severity: 'CRITICAL'
 
-    
-    - name: Initialize QEMU
-      uses: docker/setup-qemu-action@v3
+      - name: Initialize QEMU
+        uses: docker/setup-qemu-action@v3
 
-    - name: Initialize Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    
-    
-    - name: Authenticate Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USER }}
-        password: ${{ secrets.DOCKERHUB_PASS }}  
-    
-   
-    - name: Docker Image Build and Push
-      uses: docker/build-push-action@v5
-      with:
-        push: true
-        tags: tianruisun/ci-cd-workshop:${{ github.sha }}
+      - name: Initialize Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    
-    - name: Setup Image Signing Tool
-      uses: sigstore/cosign-installer@v3.5.0
-      with:
-        cosign-release: 'v2.2.4'
+      - name: Authenticate Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASS }}
 
-    
-    - name: Sign Docker Image
-      run: |
-        cosign sign --key env://SIGNING_KEY "${IMAGE_REF}@${IMAGE_HASH}"
-      env:
-        IMAGE_REF: tianruisun/ci-cd-workshop:${{ github.sha }}
-        SIGNING_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-        SIGNING_PASSPHRASE: ${{ secrets.COSIGN_PASSWORD }}
-        IMAGE_HASH: ${{ steps.build-and-push.outputs.digest }}
+      - name: Docker Image Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: tianruisun/ci-cd-workshop:${{ github.sha }}
 
-    
-    - name: Slack Notification on Success
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_TITLE: "Build and Sign Process Completed"
-        SLACK_MESSAGE: "Docker Image build and signed. Check the repository and Docker Hub."
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Setup Image Signing Tool
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Sign Docker Image
+        run: |
+          cosign sign --key env://SIGNING_KEY "${IMAGE_REF}@${IMAGE_HASH}"
+        env:
+          IMAGE_REF: tianruisun/ci-cd-workshop:${{ github.sha }}
+          SIGNING_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          SIGNING_PASSPHRASE: ${{ secrets.COSIGN_PASSWORD }}
+          IMAGE_HASH: ${{ steps.build-and-push.outputs.digest }}
+
+      - name: Slack Notification on Success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_TITLE: "Build and Sign Process Completed"
+          SLACK_MESSAGE: "Docker Image build and signed. Check the repository and Docker Hub."
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   build_failed:
-    
     if: ${{ env.CI_CONDITION == 'FAIL' && !contains(github.event.head_commit.message, '#norun') }}
     runs-on: ubuntu-latest
     steps:
-    - name: Fetch the codebase
-      uses: actions/checkout@v4
+      - name: Fetch the codebase
+        uses: actions/checkout@v4
 
-    - name: Vulnerability Scan on Failure
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'filesystem'
-        ignore-unfixed: true
-        format: 'table'
-        output: 'vulnerability-report.txt'
-        severity: 'HIGH'
+      - name: Vulnerability Scan on Failure
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'filesystem'
+          ignore-unfixed: true
+          format: 'table'
+          output: 'vulnerability-report.txt'
+          severity: 'HIGH'
 
-    - name: Slack Failure Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_COLOR: 'Failure'
-        SLACK_TITLE: "Failed Vulnerability Scan"
-        SLACK_MESSAGE: "Failed trivy scan,see upload report"
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Slack Failure Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: 'Failure'
+          SLACK_TITLE: "Failed Vulnerability Scan"
+          SLACK_MESSAGE: "Failed trivy scan, see upload report"
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-    - name: Upload Vulnerability Report to Slack
-      uses: MeilCli/slack-upload-file@v3
-      with:
-        slack_token: ${{ secrets.SLACK_TOKEN }}
-        channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-        file_path: 'vulnerability-report.txt'
-        initial_comment: 'Scan report by Tianrui'
+      - name: Upload Vulnerability Report to Slack
+        uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'vulnerability-report.txt'
+          initial_comment: 'Scan report by Tianrui'
