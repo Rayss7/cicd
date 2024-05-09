@@ -32,7 +32,7 @@ jobs:
         if: steps.get_scan_result.outputs.scan-result == '1' 
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_MESSAGE: "Vulnerabilities are found, see uploaded report!"
 
       - name: Upload Trivy scan results to slack
