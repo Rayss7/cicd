@@ -73,10 +73,10 @@ jobs:
       
       - name: Sign Docker Image
         run: |
-          cosign sign --key env://SIGNING_KEY raysun777/ci-cd-workshop:${{ github.sha }}
+          cosign sign --key env://COSIGN_PRIVATE_KEY raysun777/ci-cd-workshop:${{ github.sha }}
         env:
-          SIGNING_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          SIGNING_PASSPHRASE: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
       - name: Slack Notification on Success
         uses: rtCamp/action-slack-notify@v2
