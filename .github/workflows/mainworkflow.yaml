@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')"
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
-
+   
       - name: Scan alert to slack
         if: steps.get-scan-result.outputs.scan-result == '1' 
         uses: rtCamp/action-slack-notify@v2
