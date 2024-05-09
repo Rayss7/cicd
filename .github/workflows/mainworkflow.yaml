@@ -23,20 +23,20 @@ jobs:
           severity: 'CRITICAL'
       
       - name: Get scan results
-        id: get_scan_result
+        id: get-scan-result
         run: |
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')"
           echo "scan-result=$([ -s scan-results.txt ] && echo '1' || echo '0')" >> $GITHUB_OUTPUT
 
       - name: Scan alert to slack
-        if: steps.get_scan_result.outputs.scan-result == '1' 
+        if: steps.get-scan-result.outputs.scan-result == '1' 
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_MESSAGE: "Vulnerabilities are found, see uploaded report!"
 
       - name: Upload Trivy scan results to slack
-        if: steps.get_scan_result.outputs.scan-result == '1' 
+        if: steps.get-scan-result.outputs.scan-result == '1' 
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ secrets.SLACK_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
           file_path: scan-results.txt
       
       - name: Flow Control
-        if: steps.get_scan_result.outputs.scan-result == '1' 
+        if: steps.get-scan-result.outputs.scan-result == '1' 
         run: exit 1
 
       - name: Initialize QEMU
@@ -60,6 +60,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Docker Image Build and Push
+        id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -77,6 +78,7 @@ jobs:
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
 
       - name: Slack Notification on Success
         uses: rtCamp/action-slack-notify@v2
